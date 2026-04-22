@@ -1,6 +1,7 @@
 import { useAuth } from "@/contexts/AuthContext";
 import { useFarmData, useFarmSettings } from "@/hooks/useFarmData";
 import { calculateCropProfit, calculateMonthlyProjection } from "@/lib/profitCalculations";
+import { money, usdToMadNum } from "@/lib/displayUnits";
 import { DollarSign, TrendingUp, Leaf, Package, ShoppingCart, ListChecks, AlertTriangle } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
 import type { Database } from "@/integrations/supabase/types";
@@ -32,9 +33,9 @@ const AdminDashboard = () => {
   const topProfits = [...profits].sort((a, b) => b.marginPercent - a.marginPercent).slice(0, 5);
   const chartData = topProfits.map((p) => ({
     name: p.cropName,
-    cost: p.costPerTray,
-    revenue: p.revenuePerTray,
-    profit: p.profitPerTray,
+    cost: usdToMadNum(p.costPerTray),
+    revenue: usdToMadNum(p.revenuePerTray),
+    profit: usdToMadNum(p.profitPerTray),
     margin: p.marginPercent,
   }));
 
