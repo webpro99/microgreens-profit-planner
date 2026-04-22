@@ -1,5 +1,6 @@
 import { useFarmData, useFarmSettings } from "@/hooks/useFarmData";
 import { calculateCropProfit, calculateMonthlyProjection } from "@/lib/profitCalculations";
+import { money, usdToMadNum } from "@/lib/displayUnits";
 import { DollarSign, TrendingUp, TrendingDown, Target } from "lucide-react";
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
@@ -21,7 +22,13 @@ const FinancialsPage = () => {
   const projectionData = settings
     ? traysPerMonth.map((t) => {
         const proj = calculateMonthlyProjection(profits, t, settings);
-        return { trays: `${t}/crop`, revenue: proj.totalRevenue, cost: proj.totalCost, profit: proj.totalProfit, racks: proj.racksNeeded };
+        return {
+          trays: `${t}/crop`,
+          revenue: usdToMadNum(proj.totalRevenue),
+          cost: usdToMadNum(proj.totalCost),
+          profit: usdToMadNum(proj.totalProfit),
+          racks: proj.racksNeeded,
+        };
       })
     : [];
 
@@ -39,8 +46,8 @@ const FinancialsPage = () => {
       {/* Summary cards */}
       {projection4 && (
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <SummaryCard icon={DollarSign} label="Monthly Revenue" value={`$${projection4.totalRevenue.toLocaleString()}`} color="text-primary" />
-          <SummaryCard icon={TrendingUp} label="Monthly Profit" value={`$${projection4.totalProfit.toLocaleString()}`} color="text-primary" />
+          <SummaryCard icon={DollarSign} label="Monthly Revenue" value={money(projection4.totalRevenue, 0)} color="text-primary" />
+          <SummaryCard icon={TrendingUp} label="Monthly Profit" value={money(projection4.totalProfit, 0)} color="text-primary" />
           <SummaryCard icon={Target} label="Overall Margin" value={`${projection4.margin}%`} color="text-accent" />
           <SummaryCard icon={TrendingDown} label="Racks Needed" value={String(projection4.racksNeeded)} color="text-muted-foreground" />
         </div>
@@ -52,11 +59,11 @@ const FinancialsPage = () => {
           <h3 className="text-sm font-semibold text-foreground mb-4 text-body">Profit per Tray by Crop</h3>
           {sorted.length > 0 ? (
             <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={sorted} layout="vertical">
-                <XAxis type="number" tickFormatter={(v) => `$${v}`} tick={{ fontSize: 11 }} />
+              <BarChart data={sorted.map((p) => ({ ...p, profitPerTrayMad: usdToMadNum(p.profitPerTray) }))} layout="vertical">
+                <XAxis type="number" tickFormatter={(v) => `${v} MAD`} tick={{ fontSize: 11 }} />
                 <YAxis type="category" dataKey="cropName" width={90} tick={{ fontSize: 11 }} />
-                <Tooltip formatter={(v: number) => `$${v.toFixed(2)}`} />
-                <Bar dataKey="profitPerTray" fill="hsl(152,38%,28%)" radius={[0, 4, 4, 0]} name="Profit/Tray" />
+                <Tooltip formatter={(v: number) => `${v.toFixed(2)} MAD`} />
+                <Bar dataKey="profitPerTrayMad" fill="hsl(152,38%,28%)" radius={[0, 4, 4, 0]} name="Profit/Tray" />
               </BarChart>
             </ResponsiveContainer>
           ) : <EmptyState />}
@@ -70,8 +77,8 @@ const FinancialsPage = () => {
               <LineChart data={projectionData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="hsl(45,14%,88%)" />
                 <XAxis dataKey="trays" tick={{ fontSize: 11 }} />
-                <YAxis tickFormatter={(v) => `$${(v / 1000).toFixed(0)}k`} tick={{ fontSize: 11 }} />
-                <Tooltip formatter={(v: number) => `$${v.toLocaleString()}`} />
+                <YAxis tickFormatter={(v) => `${(v / 1000).toFixed(0)}k MAD`} tick={{ fontSize: 11 }} />
+                <Tooltip formatter={(v: number) => `${v.toLocaleString(undefined, { maximumFractionDigits: 0 })} MAD`} />
                 <Legend />
                 <Line type="monotone" dataKey="revenue" stroke="hsl(152,38%,28%)" strokeWidth={2} name="Revenue" />
                 <Line type="monotone" dataKey="cost" stroke="hsl(200,18%,76%)" strokeWidth={2} name="Cost" />
@@ -104,14 +111,14 @@ const FinancialsPage = () => {
                 {sorted.map((p) => (
                   <tr key={p.cropId} className="border-b border-border/30 last:border-0 hover:bg-muted/30 transition-colors">
                     <td className="px-6 py-3 font-medium text-foreground">{p.cropName}</td>
-                    <td className="px-6 py-3 text-right tabular-nums">${p.costPerTray.toFixed(2)}</td>
-                    <td className="px-6 py-3 text-right tabular-nums">${p.revenuePerTray.toFixed(2)}</td>
-                    <td className="px-6 py-3 text-right tabular-nums font-medium text-primary">${p.profitPerTray.toFixed(2)}</td>
+                    <td className="px-6 py-3 text-right tabular-nums">{money(p.costPerTray)}</td>
+                    <td className="px-6 py-3 text-right tabular-nums">{money(p.revenuePerTray)}</td>
+                    <td className="px-6 py-3 text-right tabular-nums font-medium text-primary">{money(p.profitPerTray)}</td>
                     <td className="px-6 py-3 text-right tabular-nums">
                       <span className={p.marginPercent >= 50 ? "text-primary" : p.marginPercent >= 20 ? "text-accent" : "text-destructive"}>{p.marginPercent}%</span>
                     </td>
-                    <td className="px-6 py-3 text-right tabular-nums hidden md:table-cell">${p.costPerClamshell.toFixed(2)}</td>
-                    <td className="px-6 py-3 text-right tabular-nums hidden md:table-cell">${p.profitPerClamshell.toFixed(2)}</td>
+                    <td className="px-6 py-3 text-right tabular-nums hidden md:table-cell">{money(p.costPerClamshell)}</td>
+                    <td className="px-6 py-3 text-right tabular-nums hidden md:table-cell">{money(p.profitPerClamshell)}</td>
                     <td className="px-6 py-3 text-right tabular-nums hidden lg:table-cell">{p.totalGrowDays}d</td>
                   </tr>
                 ))}

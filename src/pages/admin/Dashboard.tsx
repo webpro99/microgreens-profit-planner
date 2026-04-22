@@ -1,6 +1,7 @@
 import { useAuth } from "@/contexts/AuthContext";
 import { useFarmData, useFarmSettings } from "@/hooks/useFarmData";
 import { calculateCropProfit, calculateMonthlyProjection } from "@/lib/profitCalculations";
+import { money, usdToMadNum } from "@/lib/displayUnits";
 import { DollarSign, TrendingUp, Leaf, Package, ShoppingCart, ListChecks, AlertTriangle } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
 import type { Database } from "@/integrations/supabase/types";
@@ -32,9 +33,9 @@ const AdminDashboard = () => {
   const topProfits = [...profits].sort((a, b) => b.marginPercent - a.marginPercent).slice(0, 5);
   const chartData = topProfits.map((p) => ({
     name: p.cropName,
-    cost: p.costPerTray,
-    revenue: p.revenuePerTray,
-    profit: p.profitPerTray,
+    cost: usdToMadNum(p.costPerTray),
+    revenue: usdToMadNum(p.revenuePerTray),
+    profit: usdToMadNum(p.profitPerTray),
     margin: p.marginPercent,
   }));
 
@@ -60,7 +61,7 @@ const AdminDashboard = () => {
 
       {/* KPI Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <KPICard icon={DollarSign} label="Projected Monthly" value={projection ? `$${projection.totalProfit.toLocaleString()}` : "—"} sub="profit" color="text-primary" />
+        <KPICard icon={DollarSign} label="Projected Monthly" value={projection ? money(projection.totalProfit, 0) : "—"} sub="profit" color="text-primary" />
         <KPICard icon={Leaf} label="Active Crops" value={String(activeCrops.length)} sub="varieties" color="text-primary" />
         <KPICard icon={ShoppingCart} label="Pending Orders" value={String(pendingOrders.length)} sub="to fulfill" color="text-accent" />
         <KPICard icon={ListChecks} label="Open Tasks" value={String(openTasks.length)} sub="remaining" color="text-muted-foreground" />
@@ -75,8 +76,8 @@ const AdminDashboard = () => {
             <ResponsiveContainer width="100%" height={260}>
               <BarChart data={chartData}>
                 <XAxis dataKey="name" tick={{ fontSize: 11 }} />
-                <YAxis tick={{ fontSize: 11 }} tickFormatter={(v) => `$${v}`} />
-                <Tooltip formatter={(v: number) => `$${v.toFixed(2)}`} />
+                <YAxis tick={{ fontSize: 11 }} tickFormatter={(v) => `${v} MAD`} />
+                <Tooltip formatter={(v: number) => `${v.toFixed(2)} MAD`} />
                 <Bar dataKey="cost" fill="hsl(200,18%,76%)" radius={[4, 4, 0, 0]} name="Cost" />
                 <Bar dataKey="revenue" fill="hsl(152,38%,28%)" radius={[4, 4, 0, 0]} name="Revenue" />
               </BarChart>
@@ -121,7 +122,7 @@ const AdminDashboard = () => {
                   <th className="px-6 py-3 font-medium text-right">Revenue/Tray</th>
                   <th className="px-6 py-3 font-medium text-right">Profit/Tray</th>
                   <th className="px-6 py-3 font-medium text-right">Margin</th>
-                  <th className="px-6 py-3 font-medium text-right hidden md:table-cell">$/Clamshell</th>
+                  <th className="px-6 py-3 font-medium text-right hidden md:table-cell">MAD/Clamshell</th>
                 </tr>
               </thead>
               <tbody>
@@ -131,15 +132,15 @@ const AdminDashboard = () => {
                       {p.cropName}
                       {p.variety && <span className="text-muted-foreground ml-1 text-xs">({p.variety})</span>}
                     </td>
-                    <td className="px-6 py-3 text-right tabular-nums">${p.costPerTray.toFixed(2)}</td>
-                    <td className="px-6 py-3 text-right tabular-nums">${p.revenuePerTray.toFixed(2)}</td>
-                    <td className="px-6 py-3 text-right tabular-nums font-medium text-primary">${p.profitPerTray.toFixed(2)}</td>
+                    <td className="px-6 py-3 text-right tabular-nums">{money(p.costPerTray)}</td>
+                    <td className="px-6 py-3 text-right tabular-nums">{money(p.revenuePerTray)}</td>
+                    <td className="px-6 py-3 text-right tabular-nums font-medium text-primary">{money(p.profitPerTray)}</td>
                     <td className="px-6 py-3 text-right tabular-nums">
                       <span className={p.marginPercent >= 50 ? "text-primary" : p.marginPercent >= 20 ? "text-accent" : "text-destructive"}>
                         {p.marginPercent}%
                       </span>
                     </td>
-                    <td className="px-6 py-3 text-right tabular-nums hidden md:table-cell">${p.profitPerClamshell.toFixed(2)}</td>
+                    <td className="px-6 py-3 text-right tabular-nums hidden md:table-cell">{money(p.profitPerClamshell)}</td>
                   </tr>
                 ))}
               </tbody>

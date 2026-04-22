@@ -7,6 +7,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Leaf, Plus, Pencil, Trash2, Search } from "lucide-react";
 import { toast } from "sonner";
 import type { Database } from "@/integrations/supabase/types";
+import { money, moneyPerGram, ozToGrams } from "@/lib/displayUnits";
 
 type Crop = Database["public"]["Tables"]["crops"]["Row"];
 
@@ -97,17 +98,17 @@ const CropsPage = () => {
                 <NumField label="Grow (days)" value={form.grow_days} onChange={(v) => setField("grow_days", v)} />
               </div>
               <div className="grid grid-cols-2 gap-4">
-                <NumField label="Seed Cost / Tray ($)" value={form.seed_cost_per_tray} onChange={(v) => setField("seed_cost_per_tray", v)} step="0.01" />
+                <NumField label="Seed Cost / Tray (MAD)" value={form.seed_cost_per_tray} onChange={(v) => setField("seed_cost_per_tray", v)} step="0.01" />
                 <NumField label="Seed Weight / Tray (g)" value={form.seed_weight_per_tray_grams} onChange={(v) => setField("seed_weight_per_tray_grams", v)} />
               </div>
               <div className="grid grid-cols-2 gap-4">
-                <NumField label="Expected Yield (oz/tray)" value={form.expected_yield_oz_per_tray} onChange={(v) => setField("expected_yield_oz_per_tray", v)} step="0.1" />
+                <NumField label="Expected Yield (g/tray)" value={form.expected_yield_oz_per_tray} onChange={(v) => setField("expected_yield_oz_per_tray", v)} step="0.1" />
                 <NumField label="Shelf Life (days)" value={form.shelf_life_days} onChange={(v) => setField("shelf_life_days", v)} />
               </div>
               <div className="grid grid-cols-3 gap-4">
-                <NumField label="Price / oz ($)" value={form.selling_price_per_oz} onChange={(v) => setField("selling_price_per_oz", v)} step="0.01" />
-                <NumField label="Price / Clamshell ($)" value={form.selling_price_per_clamshell} onChange={(v) => setField("selling_price_per_clamshell", v)} step="0.01" />
-                <NumField label="Clamshell Size (oz)" value={form.clamshell_size_oz} onChange={(v) => setField("clamshell_size_oz", v)} step="0.5" />
+                <NumField label="Price / g (MAD)" value={form.selling_price_per_oz} onChange={(v) => setField("selling_price_per_oz", v)} step="0.01" />
+                <NumField label="Price / Clamshell (MAD)" value={form.selling_price_per_clamshell} onChange={(v) => setField("selling_price_per_clamshell", v)} step="0.01" />
+                <NumField label="Clamshell Size (g)" value={form.clamshell_size_oz} onChange={(v) => setField("clamshell_size_oz", v)} step="0.5" />
               </div>
               <div>
                 <Label className="text-xs">Notes</Label>
@@ -140,8 +141,8 @@ const CropsPage = () => {
                 <tr className="border-b border-border text-muted-foreground text-left">
                   <th className="px-6 py-3 font-medium">Crop</th>
                   <th className="px-6 py-3 font-medium hidden sm:table-cell">Grow Days</th>
-                  <th className="px-6 py-3 font-medium text-right">Yield (oz)</th>
-                  <th className="px-6 py-3 font-medium text-right">Price/oz</th>
+                  <th className="px-6 py-3 font-medium text-right">Yield (g)</th>
+                  <th className="px-6 py-3 font-medium text-right">Price/g</th>
                   <th className="px-6 py-3 font-medium text-right hidden md:table-cell">Seed Cost</th>
                   <th className="px-6 py-3 font-medium text-center">Status</th>
                   <th className="px-6 py-3 font-medium text-right">Actions</th>
@@ -157,9 +158,9 @@ const CropsPage = () => {
                     <td className="px-6 py-3 tabular-nums hidden sm:table-cell">
                       {(crop.soak_hours ?? 0) / 24 + (crop.blackout_days ?? 0) + (crop.grow_days ?? 7)}d
                     </td>
-                    <td className="px-6 py-3 text-right tabular-nums">{crop.expected_yield_oz_per_tray}</td>
-                    <td className="px-6 py-3 text-right tabular-nums">${crop.selling_price_per_oz?.toFixed(2)}</td>
-                    <td className="px-6 py-3 text-right tabular-nums hidden md:table-cell">${crop.seed_cost_per_tray?.toFixed(2)}</td>
+                    <td className="px-6 py-3 text-right tabular-nums">{ozToGrams(crop.expected_yield_oz_per_tray)}</td>
+                    <td className="px-6 py-3 text-right tabular-nums">{moneyPerGram(crop.selling_price_per_oz)}</td>
+                    <td className="px-6 py-3 text-right tabular-nums hidden md:table-cell">{money(crop.seed_cost_per_tray)}</td>
                     <td className="px-6 py-3 text-center">
                       <span className={`inline-block text-xs px-2 py-0.5 rounded-full ${crop.is_active ? "bg-surface-green text-primary" : "bg-muted text-muted-foreground"}`}>
                         {crop.is_active ? "Active" : "Inactive"}
