@@ -10,6 +10,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Blend, Plus, Pencil, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import type { Database } from "@/integrations/supabase/types";
+import { money } from "@/lib/displayUnits";
 
 type Mix = Database["public"]["Tables"]["mixes"]["Row"];
 type Crop = Database["public"]["Tables"]["crops"]["Row"];
@@ -125,9 +126,9 @@ const MixesPage = () => {
               <div><Label className="text-xs">Name *</Label><Input value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} /></div>
               <div><Label className="text-xs">Description</Label><Input value={form.description} onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))} /></div>
               <div className="grid grid-cols-3 gap-4">
-                <div><Label className="text-xs">Price/oz ($)</Label><Input type="number" step="0.01" value={form.selling_price_per_oz} onChange={(e) => setForm((f) => ({ ...f, selling_price_per_oz: Number(e.target.value) }))} /></div>
-                <div><Label className="text-xs">Price/Clamshell ($)</Label><Input type="number" step="0.01" value={form.selling_price_per_clamshell} onChange={(e) => setForm((f) => ({ ...f, selling_price_per_clamshell: Number(e.target.value) }))} /></div>
-                <div><Label className="text-xs">Clamshell (oz)</Label><Input type="number" step="0.5" value={form.clamshell_size_oz} onChange={(e) => setForm((f) => ({ ...f, clamshell_size_oz: Number(e.target.value) }))} /></div>
+                <div><Label className="text-xs">Price/g (MAD)</Label><Input type="number" step="0.01" value={form.selling_price_per_oz} onChange={(e) => setForm((f) => ({ ...f, selling_price_per_oz: Number(e.target.value) }))} /></div>
+                <div><Label className="text-xs">Price/Clamshell (MAD)</Label><Input type="number" step="0.01" value={form.selling_price_per_clamshell} onChange={(e) => setForm((f) => ({ ...f, selling_price_per_clamshell: Number(e.target.value) }))} /></div>
+                <div><Label className="text-xs">Clamshell (g)</Label><Input type="number" step="1" value={form.clamshell_size_oz} onChange={(e) => setForm((f) => ({ ...f, clamshell_size_oz: Number(e.target.value) }))} /></div>
               </div>
 
               {/* Ingredients */}
@@ -183,8 +184,8 @@ const MixesPage = () => {
                   </div>
                 </div>
                 <div className="flex gap-4 text-xs text-muted-foreground mb-3">
-                  <span>${mix.selling_price_per_oz}/oz</span>
-                  <span>${mix.selling_price_per_clamshell}/clam</span>
+                  <span>{money(mix.selling_price_per_oz)}/g</span>
+                  <span>{money(mix.selling_price_per_clamshell)}/clam</span>
                 </div>
                 {mixIngs.length > 0 && (
                   <div className="space-y-1">

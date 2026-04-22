@@ -7,6 +7,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Package, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import type { Database } from "@/integrations/supabase/types";
+import { ozToGramsNum } from "@/lib/displayUnits";
 
 type Inventory = Database["public"]["Tables"]["inventory"]["Row"];
 type Crop = Database["public"]["Tables"]["crops"]["Row"];
@@ -56,7 +57,7 @@ const InventoryPage = () => {
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div><Label className="text-xs">Trays</Label><Input type="number" value={form.quantity_trays} onChange={(e) => setForm((f) => ({ ...f, quantity_trays: Number(e.target.value) }))} /></div>
-                <div><Label className="text-xs">Quantity (oz)</Label><Input type="number" step="0.1" value={form.quantity_oz} onChange={(e) => setForm((f) => ({ ...f, quantity_oz: Number(e.target.value) }))} /></div>
+                <div><Label className="text-xs">Quantity (g)</Label><Input type="number" step="1" value={form.quantity_oz} onChange={(e) => setForm((f) => ({ ...f, quantity_oz: Number(e.target.value) }))} /></div>
               </div>
               <div><Label className="text-xs">Status</Label>
                 <select className="w-full h-9 rounded-md border border-input bg-background px-3 text-sm" value={form.status} onChange={(e) => setForm((f) => ({ ...f, status: e.target.value }))}>
@@ -80,7 +81,7 @@ const InventoryPage = () => {
               <thead><tr className="border-b border-border text-muted-foreground text-left">
                 <th className="px-6 py-3 font-medium">Crop</th>
                 <th className="px-6 py-3 font-medium text-right">Trays</th>
-                <th className="px-6 py-3 font-medium text-right">Qty (oz)</th>
+                <th className="px-6 py-3 font-medium text-right">Qty (g)</th>
                 <th className="px-6 py-3 font-medium text-center">Status</th>
                 <th className="px-6 py-3 font-medium hidden md:table-cell">Harvested</th>
                 <th className="px-6 py-3 font-medium hidden md:table-cell">Expires</th>
@@ -93,7 +94,7 @@ const InventoryPage = () => {
                     <tr key={inv.id} className="border-b border-border/30 last:border-0 hover:bg-muted/30 transition-colors">
                       <td className="px-6 py-3 font-medium text-foreground">{crop?.name ?? "—"}</td>
                       <td className="px-6 py-3 text-right tabular-nums">{inv.quantity_trays}</td>
-                      <td className="px-6 py-3 text-right tabular-nums">{inv.quantity_oz}</td>
+                      <td className="px-6 py-3 text-right tabular-nums">{ozToGramsNum(inv.quantity_oz).toFixed(0)}</td>
                       <td className="px-6 py-3 text-center"><span className={`inline-block text-xs px-2 py-0.5 rounded-full capitalize ${statusColors[inv.status ?? "growing"]}`}>{inv.status}</span></td>
                       <td className="px-6 py-3 tabular-nums hidden md:table-cell">{inv.harvested_date ?? "—"}</td>
                       <td className="px-6 py-3 tabular-nums hidden md:table-cell">{inv.expires_date ?? "—"}</td>

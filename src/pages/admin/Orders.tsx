@@ -7,6 +7,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { ShoppingCart, Plus, Pencil, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import type { Database } from "@/integrations/supabase/types";
+import { money } from "@/lib/displayUnits";
 
 type Order = Database["public"]["Tables"]["orders"]["Row"];
 type Customer = Database["public"]["Tables"]["customers"]["Row"];
@@ -118,7 +119,7 @@ const OrdersPage = () => {
                       <td className="px-6 py-3 text-center">
                         <span className={`inline-block text-xs px-2 py-0.5 rounded-full capitalize ${statusColors[o.status ?? "pending"]}`}>{o.status}</span>
                       </td>
-                      <td className="px-6 py-3 text-right tabular-nums font-medium">${(o.total ?? 0).toFixed(2)}</td>
+                      <td className="px-6 py-3 text-right tabular-nums font-medium">{money(o.total)}</td>
                       <td className="px-6 py-3 text-right">
                         <div className="flex gap-1 justify-end">
                           <button onClick={() => openEdit(o)} className="p-1.5 rounded-md hover:bg-muted"><Pencil className="w-3.5 h-3.5 text-muted-foreground" /></button>
