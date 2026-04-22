@@ -93,14 +93,14 @@ const FarmSettingsPage = () => {
                 <Label className="text-xs text-muted-foreground">{field.label}</Label>
                 <div className="relative">
                   {field.prefix && (
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">{field.prefix}</span>
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground pointer-events-none">{field.prefix}</span>
                   )}
                   <Input
                     type="number"
                     step={field.step}
                     value={form[field.key] ?? 0}
                     onChange={(e) => handleChange(field.key, Number(e.target.value))}
-                    className={field.prefix ? "pl-7" : ""}
+                    className={field.prefix ? "pl-12" : ""}
                   />
                 </div>
               </div>
