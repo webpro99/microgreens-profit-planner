@@ -8,34 +8,34 @@ import { Settings } from "lucide-react";
 
 const settingsFields = [
   { section: "Growing Costs", fields: [
-    { key: "soil_cost_per_tray", label: "Soil Cost / Tray", step: "0.01", prefix: "$" },
-    { key: "seed_cost_default", label: "Default Seed Cost / Tray", step: "0.01", prefix: "$" },
-    { key: "fertilizer_cost_per_tray", label: "Fertilizer / Tray", step: "0.01", prefix: "$" },
-    { key: "water_cost_per_tray", label: "Water / Tray", step: "0.01", prefix: "$" },
-    { key: "tray_cost", label: "Tray Cost", step: "0.01", prefix: "$" },
+    { key: "soil_cost_per_tray", label: "Soil Cost / Tray", step: "0.01", prefix: "MAD" },
+    { key: "seed_cost_default", label: "Default Seed Cost / Tray", step: "0.01", prefix: "MAD" },
+    { key: "fertilizer_cost_per_tray", label: "Fertilizer / Tray", step: "0.01", prefix: "MAD" },
+    { key: "water_cost_per_tray", label: "Water / Tray", step: "0.01", prefix: "MAD" },
+    { key: "tray_cost", label: "Tray Cost", step: "0.01", prefix: "MAD" },
   ]},
   { section: "Energy", fields: [
-    { key: "electricity_cost_per_kwh", label: "Electricity / kWh", step: "0.01", prefix: "$" },
+    { key: "electricity_cost_per_kwh", label: "Electricity / kWh", step: "0.01", prefix: "MAD" },
     { key: "electricity_hours_per_day", label: "Light Hours / Day", step: "0.5" },
-    { key: "light_cost_per_day", label: "Light Cost / Day", step: "0.01", prefix: "$" },
+    { key: "light_cost_per_day", label: "Light Cost / Day", step: "0.01", prefix: "MAD" },
   ]},
   { section: "Labor", fields: [
-    { key: "labor_rate_per_hour", label: "Labor Rate / Hour", step: "0.5", prefix: "$" },
+    { key: "labor_rate_per_hour", label: "Labor Rate / Hour", step: "0.5", prefix: "MAD" },
     { key: "labor_minutes_per_tray", label: "Labor Minutes / Tray", step: "1" },
   ]},
   { section: "Packaging", fields: [
-    { key: "clamshell_cost", label: "Clamshell Cost", step: "0.01", prefix: "$" },
-    { key: "packaging_cost_per_unit", label: "Packaging / Unit", step: "0.01", prefix: "$" },
+    { key: "clamshell_cost", label: "Clamshell Cost", step: "0.01", prefix: "MAD" },
+    { key: "packaging_cost_per_unit", label: "Packaging / Unit", step: "0.01", prefix: "MAD" },
   ]},
   { section: "Overhead (Monthly)", fields: [
-    { key: "rent_per_month", label: "Rent", step: "1", prefix: "$" },
-    { key: "insurance_per_month", label: "Insurance", step: "1", prefix: "$" },
-    { key: "misc_overhead_per_month", label: "Misc Overhead", step: "1", prefix: "$" },
+    { key: "rent_per_month", label: "Rent", step: "1", prefix: "MAD" },
+    { key: "insurance_per_month", label: "Insurance", step: "1", prefix: "MAD" },
+    { key: "misc_overhead_per_month", label: "Misc Overhead", step: "1", prefix: "MAD" },
   ]},
   { section: "Capacity", fields: [
     { key: "trays_per_rack", label: "Trays / Rack", step: "1" },
     { key: "racks_available", label: "Racks Available", step: "1" },
-    { key: "target_monthly_revenue", label: "Target Monthly Revenue", step: "100", prefix: "$" },
+    { key: "target_monthly_revenue", label: "Target Monthly Revenue", step: "100", prefix: "MAD" },
   ]},
 ];
 
